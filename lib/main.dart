@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:admin_scaffold/src/admin_scaffold.dart';
+import 'package:admin_scaffold/src/side_bar.dart';
+import 'package:admin_scaffold/src/menu_item.dart';
 
 void main() {
   runApp(const MyApp());
@@ -51,14 +54,13 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
-    });
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (context) {
+          return SamplePage('Dashboard');
+        },
+      ),
+    );
   }
 
   @override
@@ -110,6 +112,110 @@ class _MyHomePageState extends State<MyHomePage> {
         tooltip: 'Increment',
         child: const Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
+    );
+  }
+}
+
+class SamplePage extends StatelessWidget {
+  SamplePage(this._title);
+
+  String _title;
+
+  @override
+  Widget build(BuildContext context) {
+    return AdminScaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        title: const Text('Sample'),
+      ),
+      sideBar: SideBar(
+        items: const [
+          MenuItem(
+            title: 'Dashboard',
+            route: '/',
+            icon: Icons.dashboard,
+          ),
+          MenuItem(
+            title: 'Top Level',
+            icon: Icons.file_copy,
+            children: [
+              MenuItem(
+                title: 'Second Level Item 1',
+                route: '/secondLevelItem1',
+              ),
+              MenuItem(
+                title: 'Second Level Item 2',
+                route: '/secondLevelItem2',
+              ),
+              MenuItem(
+                title: 'Third Level',
+                children: [
+                  MenuItem(
+                    title: 'Third Level Item 1',
+                    route: '/thirdLevelItem1',
+                  ),
+                  MenuItem(
+                    title: 'Third Level Item 2',
+                    route: '/thirdLevelItem2',
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+        selectedRoute: '/',
+        onSelected: (item) {
+          if (item.route != null) {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) {
+                  return SamplePage(item.route!);
+                },
+              ),
+            );
+            // Navigator.of(context).pushNamed(item.route!);
+          }
+        },
+        header: Container(
+          height: 50,
+          width: double.infinity,
+          color: Color(0xff444444),
+          child: Center(
+            child: Text(
+              'header',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        footer: Container(
+          height: 50,
+          width: double.infinity,
+          color: Color(0xff444444),
+          child: Center(
+            child: Text(
+              'footer',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+      ),
+      body: SingleChildScrollView(
+        child: Container(
+          alignment: Alignment.topLeft,
+          padding: const EdgeInsets.all(10),
+          child: Text(
+            _title,
+            style: TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 36,
+            ),
+          ),
+        ),
+      ),
     );
   }
 }
